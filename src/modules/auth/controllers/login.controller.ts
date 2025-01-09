@@ -3,7 +3,7 @@ import { authService } from "../services/auth.service";
 
 import { LoginRequest, LoginResponse } from "../interfaces/login.interface";
 import { generateToken, comparePassword } from "../../../shared/utils";
-
+import { EXPIRES_IN } from "../../../shared/constants";
 
 export const login = api<LoginRequest, LoginResponse>(
     {
@@ -24,7 +24,7 @@ export const login = api<LoginRequest, LoginResponse>(
 
         return {
             token: generateToken(user.id),
-            expiresIn: 7 * 24 * 60 * 60 * 1000, 
+            expiresIn: EXPIRES_IN,
         };
     }
 );

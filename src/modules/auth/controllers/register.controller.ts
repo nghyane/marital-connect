@@ -3,7 +3,7 @@ import { authService } from "../services/auth.service";
 import { RegisterRequest, RegisterResponse } from "../interfaces/register.interface";
 import { generateToken } from "../../../shared/utils";
 import { userService } from "../../users/services/user.service";
-
+import { EXPIRES_IN } from "../../../shared/constants";
 export const register = api<RegisterRequest, RegisterResponse>(
     {
         expose: true,
@@ -22,7 +22,7 @@ export const register = api<RegisterRequest, RegisterResponse>(
 
         return {
             token: generateToken(user.id),
-            expiresIn: 7 * 24 * 60 * 60 * 1000,
+            expiresIn: EXPIRES_IN,
         };
     }
 );
