@@ -9,14 +9,12 @@
     "types": [
       "node"
     ],
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "~encore/*": [
         "encore.gen/*"
       ],
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["*"]
     },
     /* Workspace Settings */
     "composite": true,

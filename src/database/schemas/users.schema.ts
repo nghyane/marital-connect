@@ -15,8 +15,16 @@ export const usersRelations = relations(users, ({ many }) => ({
     roles: many(roles),
 }));
 
-
-export type User = typeof users.$inferSelect;
+// typeof with non-ident not yet supported
+// export type User = typeof users.$inferSelect;
+export type User = {
+    id: number;
+    email: string;
+    name: string;
+    password: string;
+    createdAt: Date | null;
+    updatedAt: Date | null;
+};
 
 
 

@@ -1,15 +1,16 @@
 import { api, APIError } from "encore.dev/api";
 import { authService } from "../services/auth.service";
 import { RegisterRequest, RegisterResponse } from "../interfaces/register.interface";
+import { generateToken } from "../../../shared/utils";
 
 export const register = api<RegisterRequest, RegisterResponse>(
     {
+        expose: true,
+        auth: false,
         method: "POST",
         path: "/register",
     },
-    async (req) => {
-        const { email, password, name } = req;
-
+    async ({ email, password, name }) => {
         const user = await authService.register({ email, password, name });
 
         if (!user) {
@@ -17,9 +18,7 @@ export const register = api<RegisterRequest, RegisterResponse>(
         }
 
         return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
+            token: generateToken(user.id),
         };
     }
 );

@@ -1,10 +1,14 @@
-import { api } from "encore.dev/api";
+import { api, APIError } from "encore.dev/api";
 import { authService } from "../services/auth.service";
 
 import { LoginRequest, LoginResponse } from "../interfaces/login.interface";
+import { generateToken, comparePassword } from "../../../shared/utils";
+
 
 export const login = api<LoginRequest, LoginResponse>(
     {
+        expose: true,
+        auth: false,
         method: "POST",
         path: "/login",
     },
@@ -13,11 +17,13 @@ export const login = api<LoginRequest, LoginResponse>(
 
         const user = await authService.login(email, password);
 
-        console.log(user);
+        if (!user || !comparePassword(password, user.password)) {
+            throw APIError.unauthenticated("Your account is not correct");
+        }
         
 
         return {
-            token: "1234567890",
+            token: generateToken(user.id),
         };
     }
 );
