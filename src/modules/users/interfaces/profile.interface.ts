@@ -1,19 +1,15 @@
-
-import { AuthParams } from "../../auth/auth";
-import { Header } from "encore.dev/api";
-
 export interface PublicUser {
     id: number;
     name: string;
     email: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: Date | null;
+    updatedAt: Date | null;
 }
 
 export interface ProfileRequest {
 
 }
 
-export interface ProfileResponse {
-        user: PublicUser;
+export interface ProfileResponse extends PublicUser {
+    roles: string[];
 }
