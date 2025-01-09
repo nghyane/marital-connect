@@ -24,6 +24,7 @@ export const login = api<LoginRequest, LoginResponse>(
 
         return {
             token: generateToken(user.id),
+            expiresIn: 7 * 24 * 60 * 60 * 1000, 
         };
     }
 );

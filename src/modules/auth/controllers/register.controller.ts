@@ -22,6 +22,7 @@ export const register = api<RegisterRequest, RegisterResponse>(
 
         return {
             token: generateToken(user.id),
+            expiresIn: 7 * 24 * 60 * 60 * 1000,
         };
     }
 );
