@@ -1,6 +1,6 @@
 import { pgTable, serial, text } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { users } from "./users.schema";
+import { userRoles } from "./user_roles.shema";
 
 export const roles = pgTable("roles", {
     id: serial("id").primaryKey(),
@@ -10,6 +10,7 @@ export const roles = pgTable("roles", {
 export type Role = typeof roles.$inferSelect;
 
 export const rolesRelations = relations(roles, ({ many }) => ({
-    users: many(users),
+    userRoles: many(userRoles),
 }));
+
 

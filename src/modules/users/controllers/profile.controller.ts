@@ -14,10 +14,12 @@ export const profile = api<ProfileRequest, ProfileResponse>(
         const userID = Number(getAuthData()!.userID);
 
         const user = await userService.getUser(userID);
-        
-        return {
-            user: user
+
+        if (!user) {
+            throw APIError.notFound("User not found");
         }
+        
+        return user;
     }
 );
 

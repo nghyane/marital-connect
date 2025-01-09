@@ -1,6 +1,6 @@
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { roles } from "./roles.schema";
+import { userRoles } from "./user_roles.shema";
 
 export const users = pgTable("users", {
     id: serial("id").primaryKey(),
@@ -12,20 +12,11 @@ export const users = pgTable("users", {
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
-    roles: many(roles),
+    userRoles: many(userRoles),
 }));
 
-// typeof with non-ident not yet supported
-// export type User = typeof users.$inferSelect;
-export type User = {
-    id: number;
-    email: string;
-    name: string;
-    password: string;
-    createdAt: Date | null;
-    updatedAt: Date | null;
-};
 
+export type User = typeof users.$inferSelect;
 
 
 
