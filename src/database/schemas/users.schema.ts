@@ -7,7 +7,7 @@ export const users = pgTable("users", {
     name: text("name").notNull(),
     email: text("email").unique().notNull(),
     password: text("password").notNull(),
-    roleId: integer("role_id").references(() => roles.id),
+    roleId: integer("role_id").references(() => roles.id).notNull(),
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at").defaultNow(),
 });

@@ -12,6 +12,3 @@ export const rolesRelations = relations(roles, ({ many }) => ({
 }));
 
 export type Role = typeof roles.$inferSelect;
-
-
-
