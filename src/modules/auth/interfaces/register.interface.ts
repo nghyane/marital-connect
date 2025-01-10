@@ -6,6 +6,7 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
     token: string;
+    expiresIn: number;
 }
 
 export interface RegisterInsert {

@@ -2,7 +2,7 @@ import { api, APIError } from "encore.dev/api";
 import { authService } from "../services/auth.service";
 import { RegisterRequest, RegisterResponse } from "../interfaces/register.interface";
 import { generateToken } from "../../../shared/utils";
-import { userService } from "../../users/services/user.service";
+// import { userService } from "../../users/services/user.service";
 import { EXPIRES_IN } from "../../../shared/constants";
 export const register = api<RegisterRequest, RegisterResponse>(
     {
@@ -18,7 +18,7 @@ export const register = api<RegisterRequest, RegisterResponse>(
             throw APIError.canceled("User registration failed");
         }
 
-        await userService.assignRole(user.id, 1);
+        // await userService.assignRole(user.id, 1);
 
         return {
             token: generateToken(user.id),

@@ -1,6 +1,7 @@
 import { pgTable, serial, text, timestamp, integer } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { roles } from "./roles.schema";
+import { experts } from "./experts.shema";
 
 export const users = pgTable("users", {
     id: serial("id").primaryKey(),
@@ -13,13 +14,20 @@ export const users = pgTable("users", {
 });
 
 
-export const usersRelations = relations(users, ({ one }) => ({
+
+export const usersRolesRelations = relations(users, ({ one }) => ({
     role: one(roles, {
         fields: [users.roleId],
         references: [roles.id],
     }),
 }));
 
+export const usersExpertsRelations = relations(users, ({ one }) => ({
+    expert: one(experts, {
+        fields: [users.id],
+        references: [experts.user_id],
+    }),
+}));
 
 
 

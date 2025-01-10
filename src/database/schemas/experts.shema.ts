@@ -19,3 +19,4 @@ export const expertsRelations = relations(experts, ({ one }) => ({
         references: [users.id],
     }),
 }));
+
