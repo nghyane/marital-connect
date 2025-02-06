@@ -18,3 +18,7 @@ export const verifyToken = (token: string) => {
     return jwt.verify(token, process.env.JWT_SECRET);
 };
 
+export const validateContent = (content: string) => {
+    return true;
+};
+

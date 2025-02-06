@@ -8,7 +8,6 @@ export interface AuthParams {
 
 export interface AuthData {
     userID: string;
-    
 }
 
 export const auth = authHandler<AuthParams, AuthData>(
@@ -34,9 +33,8 @@ export const auth = authHandler<AuthParams, AuthData>(
             throw APIError.unauthenticated("bad credentials");
         }
 
-
         return {
-            userID: `${decoded.userId}`
+            userID: `${decoded.userId}`,
         };
 
     }

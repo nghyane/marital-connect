@@ -3,6 +3,12 @@ import { users } from "../../../database/schemas/users.schema";
 import { eq } from "drizzle-orm";
 import { ProfileResponse } from "../interfaces/profile.interface";
 
+type UserWithRole = typeof users.$inferSelect & {
+    role: { 
+        name: string 
+    }
+};
+
 export const userService = {
     getUser: async (id: number): Promise<ProfileResponse | null> => {
         const user = await db.query.users.findFirst({
@@ -16,9 +22,13 @@ export const userService = {
                 roleId: true,
             },
             with: {
-                role: true,
+                role: {
+                    columns: {
+                        name: true,
+                    },
+                },
             },
-        });
+        }) as UserWithRole;
 
         if (!user) {
             return null;
@@ -29,10 +39,9 @@ export const userService = {
             id: user.id,
             email: user.email,
             name: user.name,
-            role: user.role?.name!,
+            role: user.role.name,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
-
         };
     },
     assignRole: async (userId: number, roleId: number): Promise<void> => {

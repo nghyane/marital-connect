@@ -16,7 +16,7 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.3",
-    "encore.dev": "^1.45.3",
+    "encore.dev": "^1.46.1",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1"
   }

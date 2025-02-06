@@ -1,6 +1,6 @@
 import { integer, pgTable, serial, timestamp, text } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { experts } from "./experts.shema";
+import { experts } from "./experts.schema";
 import { users } from "./users.schema";
 
 export const appointments = pgTable("appointments", {
