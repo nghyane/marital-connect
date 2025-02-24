@@ -20,6 +20,7 @@ export const register = api<RegisterRequest, RegisterResponse>(
 
         try {
             const user = await authService.register({ email, password, name, roleId });
+
             if (!user) {
                 throw APIError.canceled("User registration failed");
             }
