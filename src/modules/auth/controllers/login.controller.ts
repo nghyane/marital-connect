@@ -2,7 +2,7 @@ import { api, APIError } from "encore.dev/api";
 import { authService } from "../services/auth.service";
 
 import { LoginRequest, LoginResponse } from "../interfaces/login.interface";
-import { generateToken, comparePassword } from "../../../shared/utils";
+import { generateToken, comparePassword, generateRefreshToken } from "../../../shared/utils";
 import { EXPIRES_IN } from "../../../shared/constants";
 
 export const login = api<LoginRequest, LoginResponse>(
@@ -20,11 +20,14 @@ export const login = api<LoginRequest, LoginResponse>(
         if (!user || !comparePassword(password, user.password)) {
             throw APIError.unauthenticated("Your account is not correct");
         }
-        
 
         return {
-            token: generateToken(user.id),
-            expiresIn: EXPIRES_IN,
+            data: {
+                accessToken: generateToken(user.id),
+                refreshToken: generateRefreshToken(user.id),
+                expiresIn: EXPIRES_IN,
+            },
+            message: "Login successful",
         };
     }
 );

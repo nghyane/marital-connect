@@ -1,4 +1,5 @@
-export interface DefaultResponse {
-    message: string;
-    status: number;
+export interface BaseResponse<T> {
+    readonly data: T;
+    readonly message?: string;
+    readonly success: boolean;
 }

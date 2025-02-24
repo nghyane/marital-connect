@@ -9,23 +9,24 @@ export const authService = {
         const user = await db.query.users.findFirst({
             where: eq(users.email, email),
         });
-        
-        if(!user || !comparePassword(password, user.password)) {
-           return false;
+
+        if (!user || !comparePassword(password, user.password)) {
+            return false;
         }
 
         return user;
     },
-    
-    register: async ({ email, password, name }: RegisterInsert) => {
+
+    register: async ({ email, password, name, roleId }: RegisterInsert) => {
         const user = await db.insert(users).values({
             email,
             password: hashPassword(password),
             name,
-            roleId: DEFAULT_ROLE_ID,
+            roleId,
         }).returning();
 
-        if(user.length === 0) {
+
+        if (user.length === 0) {
             return false;
         }
 

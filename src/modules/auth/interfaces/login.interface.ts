@@ -4,6 +4,10 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-    token: string;
-    expiresIn: number;
+    data: {
+        accessToken: string;
+        refreshToken: string;
+        expiresIn: number;
+    }
+    message?: string;
 }
