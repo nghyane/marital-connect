@@ -3,6 +3,9 @@ import { expertService } from "../services/expert.service";
 import { ExpertsResponse, ExpertDetailsRequest, ExpertDetailsResponse, CreateExpertRequest, CreateExpertResponse, ExpertsFilter } from "../interfaces/expert.interface";
 import { getAuthData } from "~encore/auth";
 import { ExpertAvailabilityStatus } from "../../../database/schemas/experts.schema";
+import { apiResponse } from "../../../shared/api-response";
+import { logger } from "../../../shared/logger";
+
 export const experts = api<ExpertsFilter, ExpertsResponse>(
     {
         expose: true,
@@ -10,19 +13,26 @@ export const experts = api<ExpertsFilter, ExpertsResponse>(
         method: "GET",
         path: "/experts",
     },
-    async (req) => {        
-        const experts = await expertService.getAllExperts({
-            name: req.name,
-            location: req.location,
+    async (req) => {
+        logger.info("Experts list request", { 
+            filterName: req.name,
+            filterLocation: req.location
         });
-
-        return {
-            success: true,
-            data: experts
+        
+        try {
+            const expertsData = await expertService.getAllExperts({
+                name: req.name,
+                location: req.location,
+            });
+            
+            logger.info("Experts list retrieved", { count: expertsData.length });
+            return apiResponse.success(expertsData, "Experts retrieved successfully");
+        } catch (error) {
+            logger.error(error, "Error retrieving experts");
+            throw error;
         }
     }
 );
-
 
 export const expertProfile = api<ExpertDetailsRequest, ExpertDetailsResponse>(
     {
@@ -33,16 +43,22 @@ export const expertProfile = api<ExpertDetailsRequest, ExpertDetailsResponse>(
     },
     async (req) => {
         const { id } = req;
-        const expert = await expertService.getExpertByUserId(id);
+        logger.info("Expert profile request", { expertId: id });
+        
+        try {
+            const expert = await expertService.getExpertByUserId(id);
 
-        if (!expert) {
-            throw APIError.notFound("Expert not found");
+            if (!expert) {
+                logger.warn("Expert not found", { expertId: id });
+                throw APIError.notFound("Expert not found");
+            }
+
+            logger.info("Expert profile retrieved", { expertId: id });
+            return apiResponse.success(expert, "Expert profile retrieved successfully");
+        } catch (error) {
+            logger.error(error, "Error retrieving expert profile", { expertId: id });
+            throw error;
         }
-
-        return {
-            success: true,
-            data: expert
-        };
     }
 );
 

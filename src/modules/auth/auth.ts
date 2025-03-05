@@ -24,7 +24,6 @@ export const auth = authHandler<AuthParams, AuthData>(
 
         const decoded = verifyToken(token);
 
-
         if (typeof decoded === "string" || !decoded) {
             throw APIError.unauthenticated("bad credentials");
         }
@@ -36,7 +35,6 @@ export const auth = authHandler<AuthParams, AuthData>(
         return {
             userID: `${decoded.userId}`,
         };
-
     }
 );
 

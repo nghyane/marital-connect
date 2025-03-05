@@ -24,11 +24,7 @@ export const blogService = {
             where: eq(blogPosts.id, id),
         });
 
-        if (!blogPost) {
-            return null;
-        }
-
-        return blogPost;
+        return blogPost ?? null;
     },
 
     createBlogPost: async (blogPost: BlogPostInsert): Promise<BlogPost> => {

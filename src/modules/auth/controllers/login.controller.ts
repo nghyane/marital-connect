@@ -1,9 +1,10 @@
 import { api, APIError } from "encore.dev/api";
 import { authService } from "../services/auth.service";
-
 import { LoginRequest, LoginResponse } from "../interfaces/login.interface";
-import { generateToken, comparePassword, generateRefreshToken } from "../../../shared/utils";
+import { generateToken, generateRefreshToken } from "../../../shared/utils";
 import { EXPIRES_IN } from "../../../shared/constants";
+import { apiResponse } from "../../../shared/api-response";
+import { logger } from "../../../shared/logger";
 
 export const login = api<LoginRequest, LoginResponse>(
     {
@@ -14,20 +15,27 @@ export const login = api<LoginRequest, LoginResponse>(
     },
     async (req) => {
         const { email, password } = req;
+        
+        logger.info("Login attempt", { email });
 
-        const user = await authService.login(email, password);
+        try {
+            const user = await authService.login(email, password);
 
-        if (!user || !comparePassword(password, user.password)) {
-            throw APIError.unauthenticated("Your account is not correct");
-        }
+            if (!user) {
+                logger.warn("Failed login attempt", { email });
+                throw APIError.unauthenticated("Invalid email or password");
+            }
 
-        return {
-            data: {
+            logger.info("Successful login", { userId: user.id });
+            
+            return apiResponse.success({
                 accessToken: generateToken(user.id),
                 refreshToken: generateRefreshToken(user.id),
                 expiresIn: EXPIRES_IN,
-            },
-            message: "Login successful",
-        };
+            }, "Login successful");
+        } catch (error) {
+            logger.error(error, "Login error", { email });
+            throw error;
+        }
     }
 );

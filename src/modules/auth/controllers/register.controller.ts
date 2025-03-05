@@ -4,6 +4,9 @@ import { RegisterRequest, RegisterResponse } from "../interfaces/register.interf
 import { generateRefreshToken, generateToken } from "../../../shared/utils";
 // import { userService } from "../../users/services/user.service";
 import { EXPIRES_IN } from "../../../shared/constants";
+import { apiResponse } from "../../../shared/api-response";
+import { logger } from "../../../shared/logger";
+
 export const register = api<RegisterRequest, RegisterResponse>(
     {
         expose: true,
@@ -12,33 +15,39 @@ export const register = api<RegisterRequest, RegisterResponse>(
         path: "/register",
     },
     async ({ email, password, name, passwordConfirmation, accountType }) => {
-        if (password !== passwordConfirmation) {
-            throw APIError.canceled("Password and password confirmation do not match");
-        }
-
-        const roleId = accountType === 'expert' ? 3 : 1;
+        logger.info("Registration attempt", { email, accountType });
 
         try {
+            if (password !== passwordConfirmation) {
+                logger.warn("Password mismatch during registration", { email });
+                throw APIError.invalidArgument("Password and password confirmation do not match");
+            }
+
+            const roleId = accountType === 'expert' ? 3 : 1;
+            
             const user = await authService.register({ email, password, name, roleId });
 
             if (!user) {
-                throw APIError.canceled("User registration failed");
+                logger.error(new Error("Registration failed"), "Database error", { email });
+                throw APIError.internal("User registration failed");
             }
 
-            return {
-                data: {
-                    accessToken: generateToken(user.id),
-                    refreshToken: generateRefreshToken(user.id),
-                    expiresIn: EXPIRES_IN,
-                },
-                message: "User registered successfully",
-            };
+            logger.info("User registered successfully", { userId: user.id, accountType });
+            
+            return apiResponse.success({
+                accessToken: generateToken(user.id),
+                refreshToken: generateRefreshToken(user.id),
+                expiresIn: EXPIRES_IN,
+            }, "User registered successfully");
+            
         } catch (error) {
             if (error instanceof Error && error.message.includes('users_email_unique')) {
-                throw APIError.canceled("Email already exists");
+                logger.warn("Registration failed - email exists", { email });
+                throw APIError.alreadyExists("Email already exists");
             }
 
-            throw APIError.canceled("User registration failed");
+            logger.error(error, "Registration error", { email });
+            throw error;
         }
     }
 );

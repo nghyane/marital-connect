@@ -1,3 +1,5 @@
+import { BaseResponse } from "@/src/shared/types";
+
 export interface PublicUser {
     id: number;
     name: string;
@@ -11,6 +13,6 @@ export interface ProfileRequest {
 
 }
 
-export interface ProfileResponse extends PublicUser {
-
+export interface ProfileResponse extends BaseResponse<PublicUser> {
+    // Any additional properties specific to profile responses
 }
