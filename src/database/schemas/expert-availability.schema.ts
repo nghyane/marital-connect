@@ -26,7 +26,6 @@ export const expertAvailability = pgTable("expert_availability", {
 });
 
 export type ExpertAvailability = typeof expertAvailability.$inferSelect;
-export type NewExpertAvailability = typeof expertAvailability.$inferInsert;
 
 export const expertAvailabilityRelations = relations(expertAvailability, ({ one }) => ({
     expert: one(experts, {

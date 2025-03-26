@@ -12,7 +12,7 @@ export const AppointmentStatus = {
     RESCHEDULED: 'rescheduled',
 } as const;
 
-export type AppointmentStatus = typeof AppointmentStatus[keyof typeof AppointmentStatus];
+export type AppointmentStatus = (typeof AppointmentStatus)[keyof typeof AppointmentStatus];
 
 export const appointments = pgTable("appointments", {
     id: serial("id").primaryKey(),

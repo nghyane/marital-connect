@@ -20,9 +20,10 @@ export const experts = pgTable("experts", {
     title: text().notNull(), 
     location: text().notNull(), 
     experience: real().notNull(), 
-    specialties: jsonb().$type<readonly string[]>().notNull().default([]),
+    specialties: jsonb().$type<readonly string[]>().notNull().default([]), 
     availability_status: text().notNull().$type<ExpertAvailabilityStatus>().default(ExpertAvailabilityStatus.OFFLINE),
     about: text().notNull(),
+    google_meet_link: text()
 });
 
 export type Expert = typeof experts.$inferSelect;

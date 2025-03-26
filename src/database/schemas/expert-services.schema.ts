@@ -15,7 +15,6 @@ export const expertServices = pgTable("expert_services", {
 }); 
 
 export type ExpertService = typeof expertServices.$inferSelect;
-export type NewExpertService = typeof expertServices.$inferInsert;
 
 export const expertServicesRelations = relations(expertServices, ({ one }) => ({
     expert: one(experts, {

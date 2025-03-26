@@ -1,5 +1,5 @@
 import { api, APIError } from "encore.dev/api";
-import { generateRefreshToken, generateToken, verifyToken } from "../../../shared/utils";
+import { generateRefreshToken, generateToken, verifyToken } from "../utils";
 import { EXPIRES_IN } from "../../../shared/constants";
 import { apiResponse } from "../../../shared/api-response";
 import { logger } from "../../../shared/logger";

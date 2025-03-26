@@ -1,7 +1,7 @@
 import { api, APIError } from "encore.dev/api";
 import { authService } from "../services/auth.service";
 import { LoginRequest, LoginResponse } from "../interfaces/login.interface";
-import { generateToken, generateRefreshToken } from "../../../shared/utils";
+import { generateToken, generateRefreshToken } from "../utils";
 import { EXPIRES_IN } from "../../../shared/constants";
 import { apiResponse } from "../../../shared/api-response";
 import { logger } from "../../../shared/logger";

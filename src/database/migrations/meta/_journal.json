@@ -8,6 +8,34 @@
       "when": 1740070655309,
       "tag": "0000_sweet_dreadnoughts",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1741189039008,
+      "tag": "0001_broad_grim_reaper",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1741774245053,
+      "tag": "0002_bored_venus",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1741836145855,
+      "tag": "0003_shallow_magma",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1742324177982,
+      "tag": "0004_powerful_cobalt_man",
+      "breakpoints": true
     }
   ]
 }

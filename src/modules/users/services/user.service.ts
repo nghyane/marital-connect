@@ -1,16 +1,18 @@
 import { db } from "../../../database/drizzle";
 import { users } from "../../../database/schemas/users.schema";
+import { userProfiles } from "../../../database/schemas/user-profile.schema";
 import { eq } from "drizzle-orm";
-import { ProfileResponse } from "../interfaces/profile.interface";
+import { PublicUser } from "../interfaces/profile.interface";
 
 type UserWithRole = typeof users.$inferSelect & {
     role: { 
         name: string 
-    }
+    },
+    profile: typeof userProfiles.$inferSelect
 };
 
 export const userService = {
-    getUser: async (id: number): Promise<ProfileResponse | null> => {
+    getUser: async (id: number) => {
         const user = await db.query.users.findFirst({
             where: eq(users.id, id),
             columns: {
@@ -19,7 +21,8 @@ export const userService = {
                 name: true,
                 createdAt: true,
                 updatedAt: true,
-                roleId: true,
+                account_status: true,
+                email_verified: true,
             },
             with: {
                 role: {
@@ -27,6 +30,7 @@ export const userService = {
                         name: true,
                     },
                 },
+                profile: true,
             },
         }) as UserWithRole;
 
@@ -35,15 +39,9 @@ export const userService = {
         }
 
 
-        return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role.name,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
-        };
+        return user;
     },
+    
     assignRole: async (userId: number, roleId: number): Promise<void> => {
         await db.update(users).set({
             roleId,

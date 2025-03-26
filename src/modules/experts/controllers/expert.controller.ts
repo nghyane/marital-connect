@@ -5,6 +5,7 @@ import { getAuthData } from "~encore/auth";
 import { ExpertAvailabilityStatus } from "../../../database/schemas/experts.schema";
 import { apiResponse } from "../../../shared/api-response";
 import { logger } from "../../../shared/logger";
+import { userService } from "../../../modules/users/services/user.service";
 
 export const experts = api<ExpertsFilter, ExpertsResponse>(
     {
@@ -72,6 +73,16 @@ export const createExpert = api<CreateExpertRequest, CreateExpertResponse>(
     async (req) => {
         const userID = Number(getAuthData()!.userID);
 
+        const user = await userService.getUser(userID);
+
+        if (!user) {
+            throw APIError.notFound("Expert not found");
+        }
+
+        if (user.role.name !== "expert") {
+            throw APIError.permissionDenied("User is not an expert");
+        }
+        
 
         const expert = await expertService.createExpert({
             ...req,
@@ -85,3 +96,4 @@ export const createExpert = api<CreateExpertRequest, CreateExpertResponse>(
         };
     }
 );
+

@@ -1,6 +1,6 @@
 import { authHandler } from "encore.dev/auth";
 import { Header, Gateway, APIError } from "encore.dev/api";
-import { verifyToken } from "../../shared/utils";
+import { verifyToken } from "./utils";
 
 export interface AuthParams {
     authorization: Header<"Authorization">;

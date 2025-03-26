@@ -1,0 +1,1 @@
+ALTER TABLE "experts" ADD COLUMN "google_meet_link" text NULL;

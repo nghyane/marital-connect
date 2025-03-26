@@ -16,8 +16,8 @@ export const users = pgTable("users", {
     roleId: integer("role_id").references(() => roles.id).notNull(),
     email_verified: boolean("email_verified").default(false),
     account_status: text("account_status").default("active").notNull(),
-    created_at: timestamp("created_at").defaultNow().notNull(),
-    updated_at: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const usersRolesRelations = relations(users, ({ one }) => ({

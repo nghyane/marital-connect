@@ -1,0 +1,1 @@
+export { payosService } from './payos'; 

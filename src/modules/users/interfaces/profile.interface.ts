@@ -1,4 +1,14 @@
-import { BaseResponse } from "@/src/shared/types";
+import { BaseResponse } from "../../../shared/types";
+
+
+export interface PublicProfile {
+    bio?: string;
+    avatarUrl?: string;
+    location?: string;
+    website?: string;
+    phoneNumber?: string;
+    birthDate?: Date;
+}
 
 export interface PublicUser {
     id: number;
@@ -7,12 +17,15 @@ export interface PublicUser {
     role: string;
     createdAt: Date | null;
     updatedAt: Date | null;
-}
+    profile?: PublicProfile | null;
+ }
 
 export interface ProfileRequest {
-
+    name?: string;
+    email?: string;
+    profile?: Partial<PublicProfile>;
 }
 
-export interface ProfileResponse extends BaseResponse<PublicUser> {
-    // Any additional properties specific to profile responses
-}
+export interface ProfileResponse extends BaseResponse<any> {
+        
+} 

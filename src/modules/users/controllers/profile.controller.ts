@@ -4,9 +4,8 @@ import { getAuthData } from "~encore/auth";
 import { userService } from "../services/user.service";
 import { apiResponse } from "../../../shared/api-response";
 import { logger } from "../../../shared/logger";
-import { BaseResponse } from "../../../shared/types";
 
-export const profile = api<ProfileRequest, BaseResponse<ProfileResponse>>(
+export const profile = api<ProfileRequest, ProfileResponse>(
     {
         method: "GET",
         path: "/profile",

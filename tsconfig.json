@@ -14,7 +14,8 @@
       "~encore/*": [
         "encore.gen/*"
       ],
-      "@/*": ["*"]
+      "@/*": ["*"],
+      "@/src/*": ["src/*"]
     },
     /* Workspace Settings */
     "composite": true,

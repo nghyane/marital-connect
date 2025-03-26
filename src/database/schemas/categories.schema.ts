@@ -1,6 +1,7 @@
-import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, integer, primaryKey } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { experts } from "./experts.schema";
+import { blogPosts } from "./blog-posts.schema";
 
 export const categories = pgTable("categories", {
     id: serial("id").primaryKey(),
@@ -10,22 +11,28 @@ export const categories = pgTable("categories", {
     updated_at: timestamp("updated_at").defaultNow().notNull()
 });
 
-// Junction table for many-to-many relationship between experts and categories
 export const expertCategories = pgTable("expert_categories", {
-    expert_id: serial("expert_id").references(() => experts.id).notNull(),
-    category_id: serial("category_id").references(() => categories.id).notNull()
-}, (table) => {
-    return {
-        pk: { name: "expert_categories_pk", columns: [table.expert_id, table.category_id] }
-    };
-});
+  expert_id: integer("expert_id").references(() => experts.id).notNull(),
+  category_id: integer("category_id").references(() => categories.id).notNull(),
+}, (t) => [
+  primaryKey({ columns: [t.expert_id, t.category_id] })
+]);
+
+export const blogCategories = pgTable("blog_categories", {
+  blog_id: integer("blog_id").references(() => blogPosts.id).notNull(),
+  category_id: integer("category_id").references(() => categories.id).notNull(),
+}, (t) => [
+  primaryKey({ columns: [t.blog_id, t.category_id] })
+]);
 
 export type Category = typeof categories.$inferSelect;
-export type NewCategory = typeof categories.$inferInsert;
 
+// relations
 export const categoriesRelations = relations(categories, ({ many }) => ({
-    experts: many(expertCategories)
+    expertsCategories: many(expertCategories),
+    blogCategories: many(blogCategories),
 }));
+
 
 export const expertCategoriesRelations = relations(expertCategories, ({ one }) => ({
     expert: one(experts, {
@@ -35,5 +42,16 @@ export const expertCategoriesRelations = relations(expertCategories, ({ one }) =
     category: one(categories, {
         fields: [expertCategories.category_id],
         references: [categories.id]
-    })
+    }),
+})); 
+
+export const blogCategoriesRelations = relations(blogCategories, ({ one }) => ({
+    blog: one(blogPosts, {
+        fields: [blogCategories.blog_id],
+        references: [blogPosts.id]
+    }),
+    category: one(categories, {
+        fields: [blogCategories.category_id],
+        references: [categories.id]
+    }),
 })); 
