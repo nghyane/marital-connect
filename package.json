@@ -17,7 +17,7 @@
     "@payos/node": "^1.0.10",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.3",
-    "encore.dev": "^1.46.10",
+    "encore.dev": "^1.46.13",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1"
   }
