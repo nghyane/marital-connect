@@ -1,8 +1,3 @@
--- Roles Table
-INSERT INTO "public"."roles" ("id", "name") VALUES
-(1, 'user'),
-(2, 'admin'),
-(3, 'experts');
 
 -- Users Table
 INSERT INTO "public"."users" ("id", "name", "email", "password", "role_id", "created_at", "updated_at", "email_verified", "account_status") VALUES
