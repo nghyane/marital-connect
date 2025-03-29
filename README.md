@@ -36,30 +36,22 @@ cd marital-connect
 
 2. Install dependencies:
 ```bash
-encore run
+npm install
 ```
 
-3. Set up environment variables:
-```bash
-cp .env.sample .env
-```
-Then edit the `.env` file with your own values.
-
-4. Run the application in development mode:
+3. Run the application in development mode:
 ```bash
 encore run
 ```
 
 ## Environment Variables
 
-Configure your environment variables in the `.env` file:
+Configure your environment variables in the `.secrets.local.cue` file:
 
 - `JWT_SECRET`: Secret key for JWT token generation and validation
 - `PAYOS_CLIENT_ID`: Your PayOS client ID
 - `PAYOS_API_KEY`: Your PayOS API key
 - `PAYOS_CHECKSUM_KEY`: Your PayOS checksum key
-- `PAYOS_API_URL`: PayOS API URL (usually https://api-merchant.payos.vn)
-- `PAYOS_WEBHOOK_URL`: URL for PayOS webhook callbacks
 
 ## Webhook Setup
 
