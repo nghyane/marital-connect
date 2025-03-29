@@ -12,19 +12,11 @@ export const handlePayosWebhook = api<PayosWebhookPayload, WebhookResponse>(
     {
         expose: true,
         auth: false,
-        method: "POST",
+        method: "*",
         path: "/payments/webhook",
     },
     async (req) => {
         try {
-            logger.info("Received PayOS webhook", { 
-                success: req.payload.success,
-                code: req.payload.code,
-                orderCode: req.payload.data.orderCode,
-                amount: req.payload.data.amount,
-                description: req.payload.data.description
-            });
-            
 
             // Use the new method that directly handles the new payload structure
             const result = await payosService.handleWebhookPayload(req);
@@ -36,7 +28,6 @@ export const handlePayosWebhook = api<PayosWebhookPayload, WebhookResponse>(
         } catch (error) {
             logger.error(error, "Error processing PayOS webhook");
 
-            // throw new APIError(ErrCode.Internal, "Error processing webhook");
             return {
                 success: false,
                 message: "Error processing webhook"

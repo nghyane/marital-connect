@@ -46,5 +46,59 @@ export const userService = {
         await db.update(users).set({
             roleId,
         }).where(eq(users.id, userId));
+    },
+
+    updateUser: async (userId: number, updateData: {
+        name?: string;
+        bio?: string;
+        phone?: string;
+        address?: string;
+        city?: string;
+        state?: string;
+        country?: string;
+        postal_code?: string;
+    }) => {
+        // Update user name if provided
+        if (updateData.name) {
+            await db.update(users).set({
+                name: updateData.name,
+                updatedAt: new Date(),
+            }).where(eq(users.id, userId));
+        }
+
+        // Update profile fields
+        const profileUpdateData: Record<string, any> = {};
+        
+        if (updateData.bio !== undefined) profileUpdateData.bio = updateData.bio;
+        if (updateData.phone !== undefined) profileUpdateData.phone = updateData.phone;
+        if (updateData.address !== undefined) profileUpdateData.address = updateData.address;
+        if (updateData.city !== undefined) profileUpdateData.city = updateData.city;
+        if (updateData.state !== undefined) profileUpdateData.state = updateData.state;
+        if (updateData.country !== undefined) profileUpdateData.country = updateData.country;
+        if (updateData.postal_code !== undefined) profileUpdateData.postal_code = updateData.postal_code;
+        
+        // Only update profile if there are profile fields to update
+        if (Object.keys(profileUpdateData).length > 0) {
+            // Check if profile exists
+            const profile = await db.query.userProfiles.findFirst({
+                where: eq(userProfiles.user_id, userId),
+            });
+            
+            if (profile) {
+                // Update existing profile
+                await db.update(userProfiles)
+                    .set(profileUpdateData)
+                    .where(eq(userProfiles.user_id, userId));
+            } else {
+                // Create new profile
+                await db.insert(userProfiles).values({
+                    user_id: userId,
+                    ...profileUpdateData,
+                });
+            }
+        }
+        
+        // Return updated user
+        return await userService.getUser(userId);
     }
 }

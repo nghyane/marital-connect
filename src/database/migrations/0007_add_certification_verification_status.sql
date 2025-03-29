@@ -1,0 +1,1 @@
+ALTER TABLE "expert_certifications" ADD COLUMN IF NOT EXISTS "verification_status" text DEFAULT 'pending' NOT NULL; 

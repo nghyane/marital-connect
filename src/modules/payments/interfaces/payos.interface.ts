@@ -77,19 +77,17 @@ export interface PayosWebhookPayloadData {
     desc: string;
     counterAccountBankId: string;
     counterAccountBankName: string;
-    counterAccountName: string;
-    counterAccountNumber: string;
+    counterAccountName: string | null;
+    counterAccountNumber: string | null;
     virtualAccountName: string;
     virtualAccountNumber: string;
     currency: string;
 }
 
 export interface PayosWebhookPayload {
-    payload: {
-        code: string;
-        desc: string;
-        success: boolean;
-        data: PayosWebhookPayloadData;
-        signature: string;
-    }
+    code: string;
+    desc: string;
+    success: boolean;
+    data: PayosWebhookPayloadData;
+    signature: string;
 } 

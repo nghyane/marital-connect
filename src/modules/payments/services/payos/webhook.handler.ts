@@ -11,12 +11,11 @@ import { signatureUtils } from "./signature.utils";
  */
 export const handleWebhookPayload = async (webhookPayload: PayosWebhookPayload) => {
     try {
-        const { payload } = webhookPayload;
-        const { data, signature } = payload;
+        const { data, signature } = webhookPayload;
 
         logger.info('Processing PayOS webhook', {
-            code: payload.code,
-            success: payload.success,
+            code: webhookPayload.code,
+            success: webhookPayload.success,
             orderCode: data.orderCode
         });
         
@@ -49,7 +48,7 @@ export const handleWebhookPayload = async (webhookPayload: PayosWebhookPayload) 
         }
         
         // Determine payment status based on success flag and code
-        const isSuccessful = payload.success && data.code === "00";
+        const isSuccessful = webhookPayload.success && data.code === "00";
         const newStatus = isSuccessful ? PaymentStatus.PAID : PaymentStatus.FAILED;
         
         // Update payment status

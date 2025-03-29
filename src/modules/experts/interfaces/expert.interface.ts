@@ -1,4 +1,6 @@
 import { BaseResponse } from "../../../shared/types";
+import { CertificationVerificationStatus } from "../../../database/schemas/expert-certifications.schema";
+import { ExpertAvailabilityStatus } from "../../../database/schemas/experts.schema";
 
 
 // Expert education type
@@ -14,6 +16,8 @@ export interface ExpertCertification {
     readonly issuer: string;
     readonly year: string;
     readonly expiry_date: Date | null;
+    readonly verification_status: CertificationVerificationStatus;
+    readonly certificate_file_url?: string;
 }
 
 // Expert service type
@@ -42,7 +46,7 @@ export interface ExpertDetailsRequest {
     readonly id: number;
 }
 
-export type ExpertDetailsResponse = BaseResponse<ExpertDetailsData>;
+export interface ExpertDetailsResponse extends BaseResponse<ExpertDetailsData> {}
 
 export interface ExpertsFilter {
     readonly name?: string;
@@ -53,9 +57,7 @@ export interface ExpertsFilter {
     readonly availability_status?: "online" | "offline" | "busy" | "away";
 }
 
-export type ExpertsRequest = ExpertsFilter;
-
-export type ExpertsResponse = BaseResponse<ExpertDetailsData[]>;
+export interface ExpertsResponse extends BaseResponse<ExpertDetailsData[]> {}
 
 export interface CreateExpertRequest {
     readonly title: string;
@@ -65,7 +67,10 @@ export interface CreateExpertRequest {
     readonly about: string;
 }
 
-export type CreateExpertResponse = BaseResponse<ExpertDetailsData>;
+export interface CreateExpertResponse {
+    success: boolean;
+    data: any;
+}
 
 export interface CreateExpertServiceRequest {
     name: string;
@@ -79,8 +84,34 @@ export interface ExpertServiceResponse {
     data: ExpertService;
 }
 
-export interface ExpertServicesListResponse {
-    success: boolean;
-    data: ExpertService[];
-    count: number;
+export interface ExpertClientsResponse extends BaseResponse<ExpertClient[]> {}
+
+export interface ExpertClient {
+    readonly user_id: number;
+    readonly name: string;
+    readonly email: string;
+    readonly last_appointment: string | null;
+    readonly next_appointment: string | null;
+    readonly next_appointment_status: string | null;
+    readonly appointment_count: number;
+    readonly account_status: string; // User account status
 }
+
+export interface ClientDetailsRequest {
+    readonly clientId: string;
+}
+
+export interface ClientDetailsResponse extends BaseResponse<any> {}
+
+export interface UpdateExpertProfileRequest {
+    readonly title?: string;
+    readonly about?: string;
+    readonly location?: string;
+    readonly experience?: number;
+    readonly google_meet_link?: string | null;
+    readonly specialties?: string[];
+    readonly availability_status?: ExpertAvailabilityStatus;
+}
+
+export interface UpdateExpertProfileResponse extends BaseResponse<ExpertDetailsData> {}
+

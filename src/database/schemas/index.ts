@@ -11,4 +11,5 @@ export * from "./feedback.schema";
 export * from "./payments.schema";
 export * from "./roles.schema";
 export * from "./user-profile.schema";
-export * from "./users.schema"; 
+export * from "./users.schema";
+export * from "./withdrawals.schema"; 

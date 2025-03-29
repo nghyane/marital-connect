@@ -254,7 +254,28 @@ export const appointmentService = {
     },
 
     // Get appointments for a user
-    async getUserAppointments(userId: number): Promise<AppointmentWithRelations[]> {
+    async getUserAppointments(userId: number, date?: string): Promise<AppointmentWithRelations[]> {
+        if (date) {
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0);
+            
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
+            
+            return await db.query.appointments.findMany({
+                where: and(
+                    eq(appointments.user_id, userId),
+                    gte(appointments.scheduled_time, startOfDay),
+                    lte(appointments.scheduled_time, endOfDay)
+                ),
+                with: {
+                    expert: true,
+                    service: true
+                },
+                orderBy: (appts, { desc }) => [desc(appts.scheduled_time)]
+            });
+        }
+        
         return await db.query.appointments.findMany({
             where: eq(appointments.user_id, userId),
             with: {
@@ -266,12 +287,35 @@ export const appointmentService = {
     },
 
     // Get appointments for an expert
-    async getExpertAppointments(expertId: number): Promise<AppointmentWithRelations[]> {
+    async getExpertAppointments(expertId: number, date?: string): Promise<AppointmentWithRelations[]> {
+        if (date) {
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0);
+            
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
+            
+            return await db.query.appointments.findMany({
+                where: and(
+                    eq(appointments.expert_id, expertId),
+                    gte(appointments.scheduled_time, startOfDay),
+                    lte(appointments.scheduled_time, endOfDay)
+                ),
+                with: {
+                    user: true,
+                    service: true,
+                    expert: true
+                },
+                orderBy: (appts, { desc }) => [desc(appts.scheduled_time)]
+            });
+        }
+        
         return await db.query.appointments.findMany({
             where: eq(appointments.expert_id, expertId),
             with: {
                 user: true,
-                service: true
+                service: true,
+                expert: true
             },
             orderBy: (appts, { desc }) => [desc(appts.scheduled_time)]
         });

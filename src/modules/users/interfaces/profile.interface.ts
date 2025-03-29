@@ -28,4 +28,19 @@ export interface ProfileRequest {
 
 export interface ProfileResponse extends BaseResponse<any> {
         
+}
+
+export interface UpdateProfileRequest {
+    name?: string;
+    bio?: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    postal_code?: string;
+}
+
+export interface UpdateProfileResponse extends BaseResponse<any> {
+    
 } 

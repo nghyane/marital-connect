@@ -118,8 +118,7 @@ export const updateAppointmentStatus = api<{ id: number } & UpdateAppointmentSta
         const appointment = await appointmentService.getAppointmentById(req.id);
         
         // Check if the user is the expert for this appointment
-        const expertId = await getExpertIdForUser(userID);
-        if (appointment.expert_id !== expertId) {
+        if(appointment.expert_id !== userID) {
             throw APIError.permissionDenied("Only the expert can update the appointment status");
         }
         
