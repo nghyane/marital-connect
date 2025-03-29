@@ -19,7 +19,7 @@ export const payments = pgTable("payments", {
     id: serial("id").primaryKey(),
     user_id: integer("user_id").references(() => users.id).notNull(),
     expert_id: integer("expert_id").references(() => experts.id).notNull(),
-    appointment_id: integer("appointment_id").references(() => appointments.id),
+    appointment_id: integer("appointment_id").references(() => appointments.id).notNull(),
     amount: integer("amount").notNull(),
     status: text("status").$type<PaymentStatus>().notNull().default(PaymentStatus.PENDING),
     payment_method: text("payment_method").notNull(),

@@ -10,6 +10,8 @@
     "@types/node": "^20.5.7",
     "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.30.4",
+    "smee-client": "^3.1.1",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
     "typescript": "^5.2.2"
   },
@@ -17,8 +19,13 @@
     "@payos/node": "^1.0.10",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.3",
-    "encore.dev": "^1.46.13",
+    "encore.dev": "^1.46.14",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "configure-webhook": "ts-node scripts/confirmWebhook.ts",
+    "webhook": "ts-node scripts/smee.ts"
   }
 }

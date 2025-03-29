@@ -13,7 +13,7 @@ export const handlePayosWebhook = api<PayosWebhookPayload, WebhookResponse>(
         expose: true,
         auth: false,
         method: "POST",
-        path: "/payments/webhook/payos",
+        path: "/payments/webhook",
     },
     async (req) => {
         try {
@@ -36,7 +36,12 @@ export const handlePayosWebhook = api<PayosWebhookPayload, WebhookResponse>(
         } catch (error) {
             logger.error(error, "Error processing PayOS webhook");
 
-            throw new APIError(ErrCode.Internal, "Error processing webhook");
+            // throw new APIError(ErrCode.Internal, "Error processing webhook");
+            return {
+                success: false,
+                message: "Error processing webhook"
+            };
         }
     }
 ); 
+

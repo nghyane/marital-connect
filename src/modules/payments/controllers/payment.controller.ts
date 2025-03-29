@@ -2,10 +2,11 @@ import { api, APIError } from "encore.dev/api";
 import { payosService } from "../services";
 import { logger } from "../../../shared/logger";
 import { getAuthData } from "~encore/auth";
-import { CreatePaymentRequest, CreatePaymentResponse } from "../interfaces/index";
+import { CreatePaymentRequest, CreatePaymentResponse, GetPaymentHistoryResponse } from "../interfaces/index";
+import { PAYMENT_CONFIG } from "../config/payment.config";
 
 import { db } from "../../../database/drizzle";
-import { appointments, users } from "../../../database/schemas";
+import { appointments, users, payments } from "../../../database/schemas";
 import { eq } from "drizzle-orm";
 
 export const createPaymentLink = api<CreatePaymentRequest, CreatePaymentResponse>(
@@ -46,7 +47,7 @@ export const createPaymentLink = api<CreatePaymentRequest, CreatePaymentResponse
             }
             
             const expertId = appointment.expert.id;
-            const amount = appointment.service.price * 1000;
+            const amount = appointment.service.price * PAYMENT_CONFIG.PRICE_TO_CENTS_MULTIPLIER;
             
 
             const result = await payosService.createPaymentLink(
@@ -86,3 +87,68 @@ export const createPaymentLink = api<CreatePaymentRequest, CreatePaymentResponse
         }
     }
 ); 
+
+export const getPaymentHistory = api<{}, GetPaymentHistoryResponse>(
+    {
+        expose: true,
+        auth: true,
+        method: "GET",
+        path: "/payments/history",
+    },
+    async (): Promise<GetPaymentHistoryResponse> => {
+        try {
+            const userId = Number(getAuthData()!.userID);
+            
+            if (!userId) {
+                throw APIError.unauthenticated("User not authenticated");
+            }
+
+            // Query payment history for the user
+            const userPayments = await db.query.payments.findMany({
+                where: eq(payments.user_id, userId),
+                with: {
+                    appointment: {
+                        with: {
+                            service: true,
+                            expert: {
+                                with: {
+                                    user: true
+                                }
+                            }
+                        }
+                    }
+                },
+                orderBy: (payments, { desc }) => [desc(payments.created_at)]
+            });
+            
+            logger.info("Retrieved payment history", { userId, count: userPayments.length });
+            
+            return {
+                success: true,
+                message: "Payment history retrieved successfully",
+                data: {
+                    payments: userPayments.map(payment => ({
+                        id: payment.id,
+                        amount: payment.amount / PAYMENT_CONFIG.PRICE_TO_CENTS_MULTIPLIER,
+                        status: payment.status,
+                        created_at: payment.created_at,
+                        appointment_id: payment.appointment_id,
+                        payment_method: payment.payment_method,
+                        serviceName: payment.appointment?.service?.name || "",
+                        expertName: payment.appointment?.expert?.user?.name || ""
+                    }))
+                }
+            };
+        } catch (error) {
+            logger.error(error, "Error retrieving payment history");
+            
+            if (error instanceof APIError) {
+                throw error;
+            }
+            
+            throw APIError.internal("Failed to retrieve payment history");
+        }
+    }
+);
+
+

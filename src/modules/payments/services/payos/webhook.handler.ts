@@ -1,5 +1,6 @@
 import { db } from "../../../../database/drizzle";
 import { payments, PaymentStatus } from "../../../../database/schemas/payments.schema";
+import { appointments, AppointmentStatus } from "../../../../database/schemas/appointments.schema";
 import { eq } from "drizzle-orm";
 import { PayosWebhookPayload } from "../../interfaces";
 import { logger } from "../../../../shared/logger";
@@ -58,7 +59,13 @@ export const handleWebhookPayload = async (webhookPayload: PayosWebhookPayload) 
                 updated_at: new Date()
             })
             .where(eq(payments.id, payment.id));
-        
+
+        // Update appointment status
+        await db.update(appointments)
+            .set({ 
+                status: AppointmentStatus.CONFIRMED,
+            })
+            .where(eq(appointments.id!, payment.appointment_id!));
         logger.info('Payment status updated', { 
             paymentId: payment.id, 
             orderCode: orderCodeStr, 
