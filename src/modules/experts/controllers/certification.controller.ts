@@ -7,6 +7,7 @@ import { certificateFiles } from "../storage/certificate-files";
 import { db } from "../../../database/drizzle";
 import { expertCertifications } from "../../../database/schemas/expert-certifications.schema";
 import { IncomingMessage, ServerResponse } from "node:http";
+import { eq } from "drizzle-orm";
 
 // Configuration constants
 const ALLOWED_FILE_TYPES = [
@@ -74,6 +75,147 @@ export const uploadCertificationFile = api.raw(
       });
     } catch (error) {
       handleUploadError(error, res);
+    }
+  }
+);
+
+
+export const deleteCertification = api(
+  {
+    expose: true,
+    method: "DELETE",
+    path: "/experts/certifications/:id",
+    auth: true
+  },
+  async (params: { id: string }): Promise<ApiResponse> => {
+    const certificationId = Number(params.id);
+    
+    if (isNaN(certificationId)) {
+      throw new APIError(ErrCode.InvalidArgument, "Invalid certification ID");
+    }
+    
+    // Get the authenticated expert
+    const userID = Number(getAuthData()!.userID);
+    const expert = await expertService.getExpertByUserId(userID);
+    
+    if (!expert) {
+      throw new APIError(ErrCode.PermissionDenied, "User is not an expert");
+    }
+    
+    // Find the certification
+    const certification = await db.query.expertCertifications.findFirst({
+      where: eq(expertCertifications.id, certificationId)
+    });
+    
+    if (!certification) {
+      throw new APIError(ErrCode.NotFound, "Certification not found");
+    }
+    
+    // Check ownership
+    if (certification.expert_id !== expert.id) {
+      throw new APIError(ErrCode.PermissionDenied, "You do not have permission to delete this certification");
+    }
+    
+    try {
+      // Delete the file from storage
+      if (certification.certificate_file_url) {
+        await certificateFiles.remove(certification.certificate_file_url);
+      }
+      
+      // Delete the database record
+      await db.delete(expertCertifications)
+        .where(eq(expertCertifications.id, certificationId))
+        .execute();
+      
+      return {
+        success: true,
+        message: "Certification deleted successfully"
+      };
+    } catch (error) {
+      logger.error(error, `Error deleting certification ${certificationId}`);
+      throw new APIError(ErrCode.Internal, "Failed to delete certification");
+    }
+  }
+);
+
+
+export const updateCertification = api(
+  {
+    expose: true,
+    method: "PUT",
+    path: "/experts/certifications/:id",
+    auth: true
+  },
+  async (params: { 
+    id: string,
+    name?: string,
+    issuer?: string,
+    year?: string,
+    expiry_date?: string
+  }): Promise<ApiResponse> => {
+    const certificationId = Number(params.id);
+    
+    if (isNaN(certificationId)) {
+      throw new APIError(ErrCode.InvalidArgument, "Invalid certification ID");
+    }
+    
+    // Get the authenticated expert
+    const userID = Number(getAuthData()!.userID);
+    const expert = await expertService.getExpertByUserId(userID);
+    
+    if (!expert) {
+      throw new APIError(ErrCode.PermissionDenied, "User is not an expert");
+    }
+    
+    // Find the certification
+    const certification = await db.query.expertCertifications.findFirst({
+      where: eq(expertCertifications.id, certificationId)
+    });
+    
+    if (!certification) {
+      throw new APIError(ErrCode.NotFound, "Certification not found");
+    }
+    
+    // Check ownership
+    if (certification.expert_id !== expert.id) {
+      throw new APIError(ErrCode.PermissionDenied, "You do not have permission to update this certification");
+    }
+    
+    // Prepare update data
+    const updateData: Record<string, any> = {};
+    
+    if (params.name) updateData.name = params.name;
+    if (params.issuer) updateData.issuer = params.issuer;
+    if (params.year) updateData.year = params.year;
+    if (params.expiry_date) {
+      try {
+        updateData.expiry_date = new Date(params.expiry_date);
+      } catch (e) {
+        throw new APIError(ErrCode.InvalidArgument, "Invalid expiry date format");
+      }
+    }
+    
+    // Check if there's anything to update
+    if (Object.keys(updateData).length === 0) {
+      throw new APIError(ErrCode.InvalidArgument, "No valid fields to update");
+    }
+    
+    try {
+      // Update the database record
+      const [updated] = await db.update(expertCertifications)
+        .set(updateData)
+        .where(eq(expertCertifications.id, certificationId))
+        .returning()
+        .execute();
+      
+      return {
+        success: true,
+        message: "Certification updated successfully",
+        data: updated
+      };
+    } catch (error) {
+      logger.error(error, `Error updating certification ${certificationId}`);
+      throw new APIError(ErrCode.Internal, "Failed to update certification");
     }
   }
 );
