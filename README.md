@@ -23,7 +23,7 @@ A web application that connects experts and clients for marriage counseling and 
 
 - Node.js v20 or higher
 - Encore CLI (latest version)
-- PostgreSQL database (local or remote)
+- Docker CLI
 - PayOS account for payment processing
 
 ## Installation
@@ -36,7 +36,7 @@ cd marital-connect
 
 2. Install dependencies:
 ```bash
-npm install
+encore run
 ```
 
 3. Set up environment variables:
